@@ -33,6 +33,32 @@ ejercicios indicados.
   principal (`sox`, `$X2X`, `$FRAME`, `$WINDOW` y `$LPC`). Explique el significado de cada una de las 
   opciones empleadas y de sus valores.
 
+>* `sox`: Utilidad, definida por su mismo manual como una "Navaja Suiza" de la edición de audio. Permite leer, escribir y aplicar diversos efectos a archivos de audio en la mayoría de formatos populares. También permite combinar múltiples fuentes de entrada, síntesis de audio y actuar como reproductor de audio. También puede dividir una entrada de audio en diversos ficheros de audio de salida. Se aplican las siguientes opciones:
+>
+>
+>>`-t`: Indicamos tipo de fichero de entrada
+>
+>>`-e`: Codificación aplicada al fichero de entrada (signed-integer)
+>
+>>`-b`: Bits por muestra del fichero de entrada (16 bits)
+>
+
+>* `$X2X`: Intercambio del tipo de datos
+>>`Tipo entrada`: Short (16 bits, 2Bytes), lo indicamos con `+s`
+>
+>>`Tipo salida`: Float (32 bits, 4Bytes), lo indicamos con `+f`
+
+>* `$FRAME`: División en tramas del archivo de entrada
+>>`-l`: Tamaño de las tramas de salida (en muestras). Se aplica un tamaño de 240.
+>
+>>`-p`: Desplazamiento entre tramas. Nótese que el parámetro indicado aquí es menor que el tamaño de las tramas de salida; muestras consecutivas tendrán tramos solapados.
+
+>* `$WINDOW`: Aplicar enventanamiento a las tramas de salida. Las opciones por defecto, si no se especifican, es aplicar enventanamiento Blackman con normalización de potencia
+
+>* `$LPC`: Obtención de coeficientes de predicción lineal (LPC). El parámetro obtenido por el argumento `$lpc_order` permite especificar el número de coeficientes deseado.
+>>`-m`: Número de coeficientes de predicción lineal
+
+
 - Explique el procedimiento seguido para obtener un fichero de formato *fmatrix* a partir de los ficheros de
   salida de SPTK (líneas 45 a 47 del script `wav2lp.sh`).
 
