@@ -62,8 +62,18 @@ ejercicios indicados.
 - Explique el procedimiento seguido para obtener un fichero de formato *fmatrix* a partir de los ficheros de
   salida de SPTK (líneas 45 a 47 del script `wav2lp.sh`).
 
+```bash
+# Our array files need a header with the number of cols and rows:
+ncol=$((lpc_order+1)) # lpc p =>  (gain a1 a2 ... ap) 
+nrow=`$X2X +fa < $base.lp | wc -l | perl -ne 'print $_/'$ncol', "\n";'`
+```
+>* `Columnas (ncol)`: Hay que considerar que el primer término será la ganancia de predicción, seguido de los coeficientes LPC, por lo que el número de columnas será el orden de predicción LPC + 1.   
+>* `Filas (nrow)`: En primer lugar, usamos `X2X`  con el comando `-fa` para transformar los datos otorgados por el fichero `base.lp` de float a ASCII. Seguidamente, se cuenta el número de líneas del fichero para no depender de los solapes producidos por el enventanamiento escogido. Finalmente, se obtiene el número de filas imprimiendo un salto de línea cada vez que se obtiene un valor del fichero, y dividiéndolo por el número de columnas para compensar el efecto de que, realmente, en cada línea se obtiene el número de valores de cada una de las filas, que será exactamente igual que ncol. 
+
+
   * ¿Por qué es conveniente usar este formato (u otro parecido)? Tenga en cuenta cuál es el formato de
     entrada y cuál es el de resultado.
+
 
 - Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales de predicción lineal
   (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
