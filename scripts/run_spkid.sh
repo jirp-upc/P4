@@ -15,7 +15,7 @@
 lists=lists
 w=work
 name_exp=one
-db_devel=spk_8mu/speecon
+db=spk_8mu/speecon
 db_final=spk_8mu/sr_test
 world=users
 
@@ -64,7 +64,7 @@ if [[ -z "$w" ]]; then echo "Edit this script and set variable 'w'"; exit 1; fi
 mkdir -p $w  #Create directory if it does not exists
 if [[ $? -ne 0 ]]; then echo "Error creating directory $w"; exit 1; fi
 
-if [[ ! -d "$db_devel" ]]; then
+if [[ ! -d "$db" ]]; then
    echo "Edit this script and set variable 'db' to speecon db"
    exit 1
 fi
@@ -96,7 +96,7 @@ compute_lp() {
     shift
     listas=$*
     
-    for filename in $(cat $listas); do #Se puede usar $(cat $listas); do
+    for filename in $(cat $listas); do 
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
         EXEC="wav2lp 8 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
         echo $EXEC && $EXEC || exit 1
@@ -107,7 +107,7 @@ compute_lpcc() {
     db=$1
     shift
     listas=$*
-    for filename in $(cat $listas); do #Se puede usar $(cat $listas); do
+    for filename in $(cat $listas); do 
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
         EXEC="wav2lpcc 8 12 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
         echo $EXEC && $EXEC || exit 1
@@ -150,7 +150,7 @@ for cmd in $*; do
        ## @file
 	   # \TODO
 	   # Select (or change) good parameters for gmm_train
-       for dir in $db_devel/BLOCK*/SES* ; do
+       for dir in $db/BLOCK*/SES* ; do
            name=${dir/*\/}
            echo $name ----
            gmm_train  -v 1 $TRAIN_OPTS -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1 # Hem canviat el -m a 2
@@ -225,7 +225,7 @@ for cmd in $*; do
    # of a feature and a compute_$FEAT function exists.
    elif [[ "$(type -t compute_$cmd)" = function ]]; then
 	   FEAT=$cmd
-       compute_$FEAT $db_devel $lists/class/all.train $lists/class/all.test
+       compute_$FEAT $db $lists/class/all.train $lists/class/all.test
    else
        echo "undefined command $cmd" && exit 1
    fi
