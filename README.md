@@ -177,6 +177,8 @@ Complete el código necesario para realizar verificación del locutor y optimice
   pérdidas, y el score obtenido usando la parametrización que mejor resultado le hubiera dado en la tarea
   de reconocimiento.
 
+  Usando el mismo entrenamiento: **65** Gaussianas, **27** iteraciones y un THR=**1e-6**.
+
  |                        | Mejores resultados MFCC |
   |------------------------|:-------------------------:|
   | Umbral óptimo | 0.178811611364794 |
