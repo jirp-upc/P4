@@ -19,8 +19,8 @@ db=spk_8mu/speecon
 db_final=spk_8mu/sr_test
 world=users
 
-WORLD_OPTS="-T 1.e-6 -N 10 -m 2"
-TRAIN_OPTS="-T 1.e-6 -N 10 -m 2"
+WORLD_OPTS="-T 1.e-6 -N 27 -m 65"
+TRAIN_OPTS="-T 1.e-6 -N 27 -m 65"
 
 # ------------------------
 # Usage
@@ -176,7 +176,7 @@ for cmd in $*; do
 	   # Implement 'trainworld' in order to get a Universal Background Model for speaker verification
 	   #
 	   # - The name of the world model will be used by gmm_verify in the 'verify' command below.
-       gmm_train  -v 1 WORLD_OPTS -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train || exit 1
+       gmm_train  -v 1 $WORLD_OPTS -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train || exit 1
 
    elif [[ $cmd == verify ]]; then
        ## @file
@@ -188,7 +188,7 @@ for cmd in $*; do
 	   #   * <code> gmm_verify ... > $w/verif_${FEAT}_${name_exp}.log </code>
 	   #   * <code> gmm_verify ... | tee $w/verif_${FEAT}_${name_exp}.log </code>
 
-       gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w $world lists/gmm.list lists/verif/all.test lists/verif/all.test.candidates | tee $w/verif_${FEAT}_${name_exp}.log || exit 1
+       gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w $world $lists/gmm.list $lists/verif/all.test $lists/verif/all.test.candidates | tee $w/verif_${FEAT}_${name_exp}.log || exit 1
 
    elif [[ $cmd == verifyerr ]]; then
        if [[ ! -s $w/verif_${FEAT}_${name_exp}.log ]] ; then
@@ -206,7 +206,9 @@ for cmd in $*; do
 	   # The list of users is the same as for the classification task. The list of files to be
 	   # recognized is lists/final/class.test
        compute_$FEAT $db_final $lists/final/class.test
-       (gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list $lists/final/class.test lists/verif/all.test | tee class_test.log) || exit 1
+       (gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list $lists/final/class.test | tee class_test.log) || exit 1 #segons Albino es class_test.log
+       #(gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list $lists/final/class.test | cut -f 1,2 | tee class_test.log) || exit 1
+       #(gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list $lists/final/class.test | tee $w/class_test_${FEAT}_${name_exp}.log ) || exit 1 
    
    elif [[ $cmd == finalverif ]]; then
        ## @file
@@ -216,10 +218,10 @@ for cmd in $*; do
 	   # is lists/final/verif.test, and the list of users claimed by the test files is
 	   # lists/final/verif.test.candidates
        compute_$FEAT $db_final $lists/final/verif.test
-       gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w $world lists/final/verif.users lists/final/verif.test lists/final/verif.test.candidates | tee $w/verif_test.log
+       gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w $world $lists/final/verif.users $lists/final/verif.test $lists/final/verif.test.candidates | tee $w/verif_test.log
        perl -ane 'print "$F[0]\t$F[1]\t";
-        if ($F[2] > -3.214) {print "1\n"}
-        else {print "0\n"}' $w/verif_test.log | tee  verif_test.log
+        if ($F[2] > 0.178811611364794) {print "1\n"} 
+        else {print "0\n"}' $w/verif_test.log | tee  verif_test.log #AQUI ES ON ES MODIFICA EL THRESHOLD
    
    # If the command is not recognize, check if it is the name
    # of a feature and a compute_$FEAT function exists.
